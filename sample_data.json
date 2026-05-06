@@ -1,0 +1,46 @@
+{
+  "source": "SegmentFault Article Blog",
+  "description": "Sample article data for blog showcase",
+  "author": {
+    "username": "rui0908",
+    "display_name": "瑞0908",
+    "blog_name": "Scrapy详解",
+    "reputation": 321,
+    "followers": 77,
+    "location": "深圳"
+  },
+  "articles": [
+    {
+      "title": "FastAPI 工作流程详解",
+      "url": "https://segmentfault.com/a/1190000047672500",
+      "publish_date": "2026-03-24",
+      "tags": ["FastAPI", "Python"],
+      "read_count": "543",
+      "summary": "深入解析 FastAPI 完整工作流程：启动流程、请求处理流程、核心组件。"
+    },
+    {
+      "title": "Response 返回中文乱码的解决方案",
+      "url": "https://segmentfault.com/a/1190000047155305",
+      "publish_date": "2025-08-08",
+      "tags": ["爬虫", "Requests"],
+      "read_count": "1.2k",
+      "summary": "使用 requests 请求网页时，返回的中文内容出现乱码的解决方案。"
+    },
+    {
+      "title": "Python 判断语种 — langid 语言识别实践",
+      "url": "https://segmentfault.com/a/1190000044973632",
+      "publish_date": "2024-06-19",
+      "tags": ["Python", "NLP"],
+      "read_count": "1.4k",
+      "summary": "使用 langid.classify() 函数判断文本语言类型。"
+    },
+    {
+      "title": "Scrapy 框架入门简介",
+      "url": "https://segmentfault.com/a/1190000013178839",
+      "publish_date": "2018-02-06",
+      "tags": ["Scrapy", "Python", "入门"],
+      "read_count": "48.9k",
+      "summary": "Scrapy 架构详解与完整运作流程，制作爬虫四步骤。"
+    }
+  ]
+}

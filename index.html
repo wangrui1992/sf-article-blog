@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>瑞0908 · SegmentFault 博客</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --bg-card: #161b22;
+      --bg-hover: #1c2128;
+      --border: #30363d;
+      --border-light: #21262d;
+      --accent: #58a6ff;
+      --accent-green: #3fb950;
+      --accent-purple: #bc8cff;
+      --accent-orange: #f78166;
+      --accent-yellow: #e3b341;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: opacity .2s; }
+    a:hover { opacity: .8; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,17,23,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      padding: 0 max(1.5rem, calc(50% - 640px));
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo .cursor {
+      display: inline-block; width: 2px; height: 18px;
+      background: var(--accent); animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem; list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-secondary); font-size: 14px; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); opacity: 1; }
+    .nav-cta {
+      background: var(--accent); color: #0d1117 !important;
+      padding: 6px 16px; border-radius: 6px; font-size: 13px !important;
+    }
+    .nav-cta:hover { opacity: .85 !important; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 100px max(1.5rem, calc(50% - 640px)) 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -120px; right: -60px;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(88,166,255,.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(88,166,255,.1); border: 1px solid rgba(88,166,255,.25);
+      color: var(--accent); font-size: 12px; font-family: var(--font-mono);
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 28px;
+    }
+    .hero-badge::before { content: '●'; font-size: 8px; color: var(--accent-green); }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 600; line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: 20px;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      color: var(--text-secondary); font-size: 18px; max-width: 560px;
+      line-height: 1.7; margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #0d1117;
+      padding: 10px 22px; border-radius: 8px;
+      font-weight: 500; font-size: 14px; transition: opacity .2s;
+    }
+    .btn-primary:hover { opacity: .85; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--text-primary);
+      border: 1px solid var(--border); padding: 10px 22px; border-radius: 8px;
+      font-weight: 500; font-size: 14px; transition: border-color .2s, background .2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: rgba(88,166,255,.05); opacity: 1; }
+
+    /* ── STATS BAR ── */
+    .stats {
+      display: flex; gap: 0;
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+      margin: 0 max(1.5rem, calc(50% - 640px));
+    }
+    .stat {
+      flex: 1; padding: 20px 24px;
+      border-right: 1px solid var(--border-light);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--font-mono); font-size: 26px;
+      font-weight: 500; color: var(--text-primary);
+    }
+    .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── SECTION ── */
+    section { padding: 72px max(1.5rem, calc(50% - 640px)); }
+    .section-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 40px;
+    }
+    .section-tag {
+      font-family: var(--font-mono); font-size: 12px;
+      color: var(--accent); letter-spacing: .08em;
+    }
+    .section-title {
+      font-size: 22px; font-weight: 600; color: var(--text-primary);
+    }
+    .section-line {
+      flex: 1; height: 1px; background: var(--border-light);
+    }
+
+    /* ── POSTS GRID ── */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .post-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px; padding: 24px;
+      transition: border-color .2s, transform .2s, background .2s;
+      cursor: pointer;
+      display: flex; flex-direction: column;
+    }
+    .post-card:hover {
+      border-color: var(--border);
+      background: var(--bg-hover);
+      transform: translateY(-2px);
+    }
+    .post-meta {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 14px;
+    }
+    .post-tag {
+      font-family: var(--font-mono); font-size: 11px;
+      padding: 3px 8px; border-radius: 4px;
+      border: 1px solid; font-weight: 500;
+    }
+    .tag-blue { color: var(--accent); border-color: rgba(88,166,255,.3); background: rgba(88,166,255,.08); }
+    .tag-green { color: var(--accent-green); border-color: rgba(63,185,80,.3); background: rgba(63,185,80,.08); }
+    .tag-purple { color: var(--accent-purple); border-color: rgba(188,140,255,.3); background: rgba(188,140,255,.08); }
+    .tag-orange { color: var(--accent-orange); border-color: rgba(247,129,102,.3); background: rgba(247,129,102,.08); }
+    .tag-yellow { color: var(--accent-yellow); border-color: rgba(227,179,65,.3); background: rgba(227,179,65,.08); }
+
+    .post-date { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+    .post-title {
+      font-size: 17px; font-weight: 600; color: var(--text-primary);
+      line-height: 1.4; margin-bottom: 10px;
+    }
+    .post-excerpt { font-size: 13px; color: var(--text-secondary); line-height: 1.65; flex: 1; }
+    .post-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 18px; padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+    }
+    .post-reading {
+      font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .post-arrow { color: var(--accent); font-size: 16px; transition: transform .2s; }
+    .post-card:hover .post-arrow { transform: translateX(4px); }
+
+    /* ── FEATURED POST ── */
+    .post-featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    @media (max-width: 700px) {
+      .post-featured { grid-template-columns: 1fr; }
+    }
+    .post-featured .post-cover {
+      background: linear-gradient(135deg, #1c2128 0%, #0d1117 100%);
+      border-right: 1px solid var(--border-light);
+      border-radius: 12px 0 0 12px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 220px; position: relative; overflow: hidden;
+    }
+    .post-featured .post-cover pre {
+      font-family: var(--font-mono); font-size: 12px;
+      color: var(--text-muted); line-height: 1.8;
+      padding: 24px; pointer-events: none; user-select: none;
+    }
+    .post-featured .post-cover pre .kw { color: #ff7b72; }
+    .post-featured .post-cover pre .fn { color: #d2a8ff; }
+    .post-featured .post-cover pre .str { color: #a5d6ff; }
+    .post-featured .post-cover pre .cm { color: #8b949e; }
+    .post-featured .post-content { padding: 28px; display: flex; flex-direction: column; }
+
+    /* ── CODE SNIPPET ── */
+    .code-block {
+      background: #0d1117; border: 1px solid var(--border-light);
+      border-radius: 8px; overflow: hidden; margin: 0;
+    }
+    .code-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border-light);
+      background: var(--bg-card);
+    }
+    .code-dots { display: flex; gap: 6px; }
+    .code-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .code-dot:nth-child(1) { background: #ff5f57; }
+    .code-dot:nth-child(2) { background: #ffbd2e; }
+    .code-dot:nth-child(3) { background: #28c841; }
+    .code-lang { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+    .code-content { padding: 16px 18px; font-family: var(--font-mono); font-size: 13px; line-height: 1.8; overflow-x: auto; }
+
+    /* ── TAGS CLOUD ── */
+    .tags-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tag-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 20px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-card); color: var(--text-secondary);
+      font-size: 13px; cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .tag-pill:hover {
+      border-color: var(--accent); color: var(--accent);
+      background: rgba(88,166,255,.06);
+    }
+    .tag-count {
+      background: var(--bg); color: var(--text-muted);
+      font-family: var(--font-mono); font-size: 11px;
+      padding: 1px 6px; border-radius: 10px;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid; grid-template-columns: 240px 1fr; gap: 40px;
+    }
+    @media (max-width: 700px) { .about-grid { grid-template-columns: 1fr; } }
+    .about-avatar {
+      width: 160px; height: 160px; border-radius: 12px;
+      background: linear-gradient(135deg, #1a2744, #1c2128);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 48px;
+      position: relative; overflow: hidden;
+    }
+    .about-avatar::after {
+      content: '{ }'; font-size: 56px; color: rgba(88,166,255,.25);
+      font-family: var(--font-mono);
+    }
+    .about-name { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .about-role {
+      font-family: var(--font-mono); font-size: 13px; color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .about-bio { color: var(--text-secondary); font-size: 14px; line-height: 1.75; margin-bottom: 20px; }
+    .about-skills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .skill-badge {
+      font-family: var(--font-mono); font-size: 12px;
+      padding: 4px 10px; border-radius: 5px;
+      background: var(--bg-card); border: 1px solid var(--border-light);
+      color: var(--text-secondary);
+    }
+    .social-links { display: flex; gap: 10px; }
+    .social-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 7px;
+      border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--text-secondary); font-size: 13px;
+      transition: border-color .2s, color .2s;
+    }
+    .social-btn:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
+    /* ── TIMELINE ── */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px;
+      width: 1px; background: var(--border-light);
+    }
+    .tl-item { position: relative; padding-bottom: 28px; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-dot {
+      position: absolute; left: -25px; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--bg-card); border: 2px solid var(--border);
+    }
+    .tl-dot.active { border-color: var(--accent); background: var(--accent); }
+    .tl-date { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+    .tl-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .tl-desc { font-size: 13px; color: var(--text-secondary); }
+
+    /* ── NEWSLETTER ── */
+    .newsletter {
+      background: var(--bg-card); border: 1px solid var(--border-light);
+      border-radius: 16px; padding: 48px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .newsletter::before {
+      content: ''; position: absolute;
+      top: -100px; left: 50%; transform: translateX(-50%);
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(88,166,255,.04) 0%, transparent 70%);
+    }
+    .newsletter h3 { font-size: 22px; font-weight: 600; margin-bottom: 10px; }
+    .newsletter p { color: var(--text-secondary); margin-bottom: 24px; font-size: 14px; }
+    .subscribe-form {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    }
+    .subscribe-form input {
+      background: var(--bg); border: 1px solid var(--border);
+      color: var(--text-primary); padding: 10px 16px; border-radius: 8px;
+      font-size: 14px; width: 280px; outline: none;
+      transition: border-color .2s;
+      font-family: var(--font-sans);
+    }
+    .subscribe-form input::placeholder { color: var(--text-muted); }
+    .subscribe-form input:focus { border-color: var(--accent); }
+    .subscribe-form button {
+      background: var(--accent); color: #0d1117;
+      border: none; padding: 10px 22px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      font-family: var(--font-sans);
+      transition: opacity .2s;
+    }
+    .subscribe-form button:hover { opacity: .85; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border-light);
+      padding: 32px max(1.5rem, calc(50% - 640px));
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-left { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+    .footer-left span { color: var(--accent-orange); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a { font-size: 13px; color: var(--text-muted); transition: color .2s; }
+    .footer-links a:hover { color: var(--text-primary); opacity: 1; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .stats { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border-light); }
+      .stat:last-child { border-bottom: none; }
+      .posts-grid { grid-template-columns: 1fr; }
+      .newsletter { padding: 32px 20px; }
+    }
+
+    /* ── SYNTAX COLORS ── */
+    .kw { color: #ff7b72; }
+    .fn { color: #d2a8ff; }
+    .str { color: #a5d6ff; }
+    .cm { color: #8b949e; font-style: italic; }
+    .num { color: #79c0ff; }
+    .var { color: #e6edf3; }
+    .op { color: #ff7b72; }
+
+    /* ── SCROLL TO TOP ── */
+    #scrollTop {
+      position: fixed; bottom: 28px; right: 28px;
+      width: 40px; height: 40px; border-radius: 8px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-secondary); font-size: 16px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(8px);
+      transition: all .3s; z-index: 99;
+    }
+    #scrollTop.show { opacity: 1; transform: translateY(0); }
+    #scrollTop:hover { border-color: var(--accent); color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">~/rui0908<span class="cursor"></span></div>
+    <ul class="nav-links">
+      <li><a href="#posts">文章</a></li>
+      <li><a href="#tags">标签</a></li>
+      <li><a href="#about">关于</a></li>
+      <li><a href="#newsletter" class="nav-cta">订阅</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="hero-badge">SegmentFault 博主 · 91 篇文章</div>
+  <h1>瑞0908 的<br/><span class="grad">技术博客</span></h1>
+  <p class="hero-desc">专注 Python 爬虫技术、Scrapy 框架实战与后端开发。从入门到进阶，记录每一段技术探索的旅程。</p>
+  <div class="hero-actions">
+    <a href="#posts" class="btn-primary">浏览文章 →</a>
+    <a href="#about" class="btn-secondary">关于博主</a>
+  </div>
+</header>
+
+<!-- ── STATS ── -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">91</div>
+    <div class="stat-label">篇技术文章</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">8y</div>
+    <div class="stat-label">写作年限</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">321</div>
+    <div class="stat-label">思否声望</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">14</div>
+    <div class="stat-label">技术提问</div>
+  </div>
+</div>
+
+<!-- ── POSTS ── -->
+<section id="posts">
+  <div class="section-header">
+    <span class="section-tag">// POSTS</span>
+    <h2 class="section-title">最新文章</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="posts-grid">
+
+    <!-- Featured: FastAPI -->
+    <article class="post-card post-featured" onclick="window.open('https://segmentfault.com/a/1190000047672500','_blank')">
+      <div class="post-cover">
+        <pre><span class="cm"># FastAPI 工作流程</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> <span class="fn">FastAPI</span>
+
+app = <span class="fn">FastAPI</span>()
+
+<span class="kw">@app.get</span>(<span class="str">"/items/{item_id}"</span>)
+<span class="kw">async def</span> <span class="fn">read_item</span>(item_id: <span class="var">int</span>):
+    <span class="kw">return</span> {<span class="str">"item_id"</span>: item_id}</pre>
+      </div>
+      <div class="post-content">
+        <div class="post-meta">
+          <span class="post-tag tag-blue">FastAPI</span>
+          <span class="post-tag tag-green">Python</span>
+          <span class="post-date">2026-03-24</span>
+        </div>
+        <h3 class="post-title">FastAPI 工作流程详解</h3>
+        <p class="post-excerpt">深入解析 FastAPI 完整工作流程：启动流程（初始化阶段、服务器启动）、请求处理流程（请求接收→路由匹配→依赖解析→请求验证→端点执行→响应生成→响应发送），以及核心组件（路由系统、依赖注入、数据验证、文档生成、中间件）。</p>
+        <div class="post-footer">
+          <span class="post-reading">⏱ FastAPI · Python</span>
+          <span class="post-arrow">→</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2: Response 中文乱码 -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000047155305','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-orange">爬虫</span>
+        <span class="post-tag tag-blue">Requests</span>
+        <span class="post-date">2025-08-08</span>
+      </div>
+      <h3 class="post-title">Response 返回中文乱码的解决方案</h3>
+      <p class="post-excerpt">在使用 requests 请求网页时，返回的中文内容出现乱码。根本原因在于响应编码与页面实际编码不一致，通过 response.encoding = 'utf-8' 即可解决。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ 爬虫 · Requests</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 3: Python 判断语种 -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000044973632','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-green">Python</span>
+        <span class="post-tag tag-purple">NLP</span>
+        <span class="post-date">2024-06-19</span>
+      </div>
+      <h3 class="post-title">Python 判断语种 — langid 语言识别实践</h3>
+      <p class="post-excerpt">使用 langid.classify() 函数判断文本语言类型。支持中文(zh)、日语(ja)、韩语(ko)、英语(en)等多种语言识别，适用于多语言内容处理场景。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ Python · NLP</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 4: imghdr -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000044936583','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-green">Python</span>
+        <span class="post-date">2024-06-03</span>
+      </div>
+      <h3 class="post-title">imghdr — Python 内置图像类型判断模块</h3>
+      <p class="post-excerpt">使用 Python 内置的 imghdr 模块判断文件是否为图片。通过 imghdr.what(file_path) 即可返回图片类型（jpeg、png、gif 等），无需安装第三方依赖。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ Python · 标准库</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 5: Pycharm -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000039885529','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-blue">开发工具</span>
+        <span class="post-tag tag-green">Python</span>
+        <span class="post-date">2021-04-23</span>
+      </div>
+      <h3 class="post-title">PyCharm 常用快捷键大全</h3>
+      <p class="post-excerpt">最常用快捷键、效率之王快捷键（批量注释、进入列编辑、全局搜索）、代码格式与操作、代码导航、查找替换、运行调试等 PyCharm 快捷键完整指南。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ 开发工具 · PyCharm</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 6: 正则去 HTML -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000018612683','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-yellow">正则表达式</span>
+        <span class="post-tag tag-green">Python</span>
+        <span class="post-date">2019-03-22</span>
+      </div>
+      <h3 class="post-title">用正则表达式去除字符串中的 HTML 标签</h3>
+      <p class="post-excerpt">使用 re.sub(r'&lt;.*?&gt;','', htmlString) 一行代码去除 HTML 标签，快速获取纯文本内容。附带贪婪与非贪婪模式的对比分析。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ 正则 · Python</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 7: Scrapy settings -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000013267962','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-orange">Scrapy</span>
+        <span class="post-tag tag-green">Python</span>
+        <span class="post-date">2018-02-12</span>
+      </div>
+      <h3 class="post-title">Scrapy 之 settings 配置详解</h3>
+      <p class="post-excerpt">详解 Scrapy 全部核心配置项：BOT_NAME、CONCURRENT_REQUESTS、DOWNLOAD_DELAY、ITEM_PIPELINES、LOG_LEVEL、USER_AGENT、PROXIES 代理设置、COOKIES 等配置及其默认值和用法。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ Scrapy · 爬虫</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 8: 反反爬虫 -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000013254085','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-orange">反爬虫</span>
+        <span class="post-tag tag-blue">Scrapy</span>
+        <span class="post-date">2018-02-10</span>
+      </div>
+      <h3 class="post-title">反反爬虫相关机制与策略</h3>
+      <p class="post-excerpt">动态设置 User-Agent、禁用 Cookies、设置延迟下载、使用 Google/Baidu Cache、IP 地址池（VPN/代理）、Crawlera 代理组件。详解下载中间件 process_request() 和 process_response() 的编写。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ 爬虫 · 反爬</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 9: Item Pipeline -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000013199835','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-green">Scrapy</span>
+        <span class="post-date">2018-02-07</span>
+      </div>
+      <h3 class="post-title">Scrapy Item Pipeline 数据处理管道</h3>
+      <p class="post-excerpt">Item Pipeline 用于处理 Spider 收集的 Item：验证爬取数据、查重、保存到文件或数据库。实现 process_item()、open_spider() 和 close_spider() 方法，通过 ITEM_PIPELINES 配置启用。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ Scrapy · Pipeline</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 10: Scrapy Shell -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000013199636','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-green">Scrapy</span>
+        <span class="post-date">2018-02-07</span>
+      </div>
+      <h3 class="post-title">Scrapy Shell 交互式调试终端</h3>
+      <p class="post-excerpt">Scrapy Shell 可在不启动爬虫的情况下调试代码、测试 XPath/CSS 表达式。内置 Selectors 选择器支持 xpath()、extract()、css()、re() 方法，支持 IPython 智能补全。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ Scrapy · 调试</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+    <!-- Card 11: Scrapy 入门 -->
+    <article class="post-card" onclick="window.open('https://segmentfault.com/a/1190000013178839','_blank')">
+      <div class="post-meta">
+        <span class="post-tag tag-orange">Scrapy</span>
+        <span class="post-tag tag-green">Python</span>
+        <span class="post-tag tag-yellow">入门</span>
+        <span class="post-date">2018-02-06</span>
+      </div>
+      <h3 class="post-title">Scrapy 框架入门简介</h3>
+      <p class="post-excerpt">Scrapy 架构详解（Engine、Scheduler、Downloader、Spider、Pipeline、Middlewares）与完整运作流程。制作爬虫四步骤：新建项目 → 明确目标(items.py) → 制作爬虫 → 存储内容(pipelines.py)。</p>
+      <div class="post-footer">
+        <span class="post-reading">⏱ Scrapy · 入门教程</span>
+        <span class="post-arrow">→</span>
+      </div>
+    </article>
+
+  </div>
+
+  <div style="text-align:center; margin-top: 36px;">
+    <a href="https://segmentfault.com/u/rui0908/articles" target="_blank" class="btn-secondary">在 SegmentFault 查看全部 91 篇文章 →</a>
+  </div>
+</section>
+
+<!-- ── TAGS ── -->
+<section id="tags" style="padding-top: 0;">
+  <div class="section-header">
+    <span class="section-tag">// TOPICS</span>
+    <h2 class="section-title">技术标签</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="tags-cloud">
+    <div class="tag-pill">Python <span class="tag-count">91</span></div>
+    <div class="tag-pill">Scrapy <span class="tag-count">15</span></div>
+    <div class="tag-pill">爬虫 <span class="tag-count">30+</span></div>
+    <div class="tag-pill">正则表达式 <span class="tag-count">8</span></div>
+    <div class="tag-pill">Requests <span class="tag-count">12</span></div>
+    <div class="tag-pill">Feapder <span class="tag-count">6</span></div>
+    <div class="tag-pill">FastAPI <span class="tag-count">4</span></div>
+    <div class="tag-pill">PyCharm <span class="tag-count">3</span></div>
+    <div class="tag-pill">加密算法 <span class="tag-count">5</span></div>
+    <div class="tag-pill">开发工具 <span class="tag-count">7</span></div>
+    <div class="tag-pill">反爬虫 <span class="tag-count">9</span></div>
+    <div class="tag-pill">Web 框架 <span class="tag-count">4</span></div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="section-header">
+    <span class="section-tag">// ABOUT</span>
+    <h2 class="section-title">关于我</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div>
+      <div class="about-avatar"></div>
+    </div>
+    <div>
+      <div class="about-name">瑞0908</div>
+      <div class="about-role">Python 开发者 · SegmentFault 博主</div>
+      <p class="about-bio">
+        在 SegmentFault 上持续输出 8 年，累计发布 91 篇技术文章。专注 Python 爬虫技术，尤其深耕 Scrapy 框架体系。从爬虫入门指南到反反爬虫策略，从数据采集到工程实践，帮助大量开发者入门与进阶。
+      </p>
+      <div class="about-skills">
+        <span class="skill-badge">Python</span>
+        <span class="skill-badge">Scrapy</span>
+        <span class="skill-badge">Requests</span>
+        <span class="skill-badge">Feapder</span>
+        <span class="skill-badge">正则表达式</span>
+        <span class="skill-badge">FastAPI</span>
+        <span class="skill-badge">PyCharm</span>
+        <span class="skill-badge">反爬虫</span>
+      </div>
+      <div class="social-links">
+        <a href="https://segmentfault.com/u/rui0908" target="_blank" class="social-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          SegmentFault
+        </a>
+        <a href="https://segmentfault.com/u/rui0908/articles" target="_blank" class="social-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          文章列表
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div style="margin-top: 48px;">
+    <div class="section-header" style="margin-bottom: 24px;">
+      <span class="section-tag">// TIMELINE</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot active"></div>
+        <div class="tl-date">2024 — 至今</div>
+        <div class="tl-title">深耕 Python 全栈与 AI 应用</div>
+        <div class="tl-desc">探索 FastAPI、langid 等前沿 Python 技术，持续输出高质量技术文章。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2021 — 2024</div>
+        <div class="tl-title">Scrapy 框架系列教程持续更新</div>
+        <div class="tl-desc">发布 PyCharm 快捷键大全等实用工具类文章，单篇最高阅读 48.9k。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2018 — 2021</div>
+        <div class="tl-title">Scrapy 爬虫框架系统化输出</div>
+        <div class="tl-desc">系统发布 Scrapy 系列教程（入门、settings、反爬虫、Pipeline、Shell），成为 Scrapy 入门经典参考。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2018</div>
+        <div class="tl-title">加入 SegmentFault 思否</div>
+        <div class="tl-desc">开始技术写作之路，以 Python 和爬虫技术为主要方向，累计获得 321 声望。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── NEWSLETTER ── -->
+<section id="newsletter" style="padding-top: 0;">
+  <div class="newsletter">
+    <h3>不错过每一篇深度文章</h3>
+    <p>每两周发送一封技术邮件，只有干货，没有广告</p>
+    <div class="subscribe-form">
+      <input type="email" placeholder="your@email.com" />
+      <button>订阅 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-left">
+    Built with <span>♥</span> · 瑞0908 · SegmentFault 博客
+  </div>
+  <ul class="footer-links">
+    <li><a href="https://segmentfault.com/u/rui0908" target="_blank">SegmentFault 主页</a></li>
+    <li><a href="https://segmentfault.com/u/rui0908/articles" target="_blank">全部文章</a></li>
+    <li><a href="https://segmentfault.com/feeds/blog/rui0908" target="_blank">RSS</a></li>
+  </ul>
+</footer>
+
+<button id="scrollTop" title="回到顶部">↑</button>
+
+<script>
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    scrollBtn.classList.toggle('show', window.scrollY > 400);
+  });
+  scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Tag pills interactive
+  document.querySelectorAll('.tag-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      pill.style.borderColor = 'var(--accent)';
+      pill.style.color = 'var(--accent)';
+    });
+  });
+
+  // Subscribe
+  document.querySelector('.subscribe-form button').addEventListener('click', () => {
+    const input = document.querySelector('.subscribe-form input');
+    if (input.value && input.value.includes('@')) {
+      input.value = '';
+      input.placeholder = '✓ 订阅成功，感谢关注！';
+      setTimeout(() => { input.placeholder = 'your@email.com'; }, 3000);
+    }
+  });
+</script>
+</body>
+</html>
