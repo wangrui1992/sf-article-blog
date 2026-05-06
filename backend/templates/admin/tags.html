@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>标签管理</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d1117; --bg-card: #161b22; --border: #30363d; --accent: #58a6ff; --accent-green: #3fb950; --accent-red: #f85149; --text: #e6edf3; --text-secondary: #8b949e; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .sidebar { position: fixed; left: 0; top: 0; width: 240px; height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); padding: 24px 16px; }
+    .sidebar-logo { font-family: monospace; font-size: 18px; font-weight: 500; margin-bottom: 32px; padding-left: 12px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px; color: var(--text-secondary); text-decoration: none; border-radius: 8px; margin-bottom: 4px; font-size: 14px; transition: all 0.2s; }
+    .nav-item:hover, .nav-item.active { background: rgba(88,166,255,0.1); color: var(--accent); }
+    .main { margin-left: 240px; padding: 32px; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .page-header h1 { font-size: 28px; font-weight: 600; }
+    .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: var(--accent); color: #0d1117; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .form-group { display: flex; gap: 12px; }
+    .form-group input { flex: 1; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; }
+    .form-group input:focus { outline: none; border-color: var(--accent); }
+    .tag-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .tag-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .tag-info { display: flex; align-items: center; gap: 10px; }
+    .tag-color { width: 12px; height: 12px; border-radius: 50%; }
+    .tag-name { font-weight: 500; }
+    .tag-count { font-size: 12px; color: var(--text-secondary); }
+    .tag-actions { display: flex; gap: 8px; }
+    .tag-actions button { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+    .tag-actions button:hover { background: var(--bg-card); color: var(--accent); }
+    .tag-actions button.delete:hover { color: var(--accent-red); }
+    .message { padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; display: none; }
+    .message.success { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); color: var(--accent-green); }
+    .empty { text-align: center; padding: 60px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="sidebar-logo">~/admin</div>
+    <a href="/dashboard" class="nav-item">📊 仪表盘</a>
+    <a href="/article/list" class="nav-item">📝 文章管理</a>
+    <a href="/admin/tags" class="nav-item active">🏷️ 标签管理</a>
+    <a href="/admin/users" class="nav-item">👥 用户管理</a>
+    <a href="/auth/logout" class="nav-item">🚪 退出登录</a>
+  </nav>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>标签管理</h1>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <div class="card">
+      <form id="tagForm" class="form-group">
+        <input type="text" id="tagName" placeholder="输入标签名称" required>
+        <input type="color" id="tagColor" value="#58a6ff" style="width:60px;">
+        <button type="submit" class="btn">添加标签</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="tag-list" id="tagList">
+        <div class="empty">加载中...</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    async function loadTags() {
+      try {
+        const response = await fetch('/admin/api/tags');
+        const result = await response.json();
+        
+        if (result.success && result.data.length > 0) {
+          renderTags(result.data);
+        } else {
+          document.getElementById('tagList').innerHTML = '<div class="empty">暂无标签</div>';
+        }
+      } catch (err) {
+        document.getElementById('tagList').innerHTML = '<div class="empty">加载失败</div>';
+      }
+    }
+
+    function renderTags(tags) {
+      document.getElementById('tagList').innerHTML = tags.map(t => `
+        <div class="tag-item">
+          <div class="tag-info">
+            <span class="tag-color" style="background:${t.color}"></span>
+            <span class="tag-name">${escapeHtml(t.name)}</span>
+            <span class="tag-count">${t.article_count || 0} 篇</span>
+          </div>
+          <div class="tag-actions">
+            <button onclick="editTag(${t.id}, '${escapeHtml(t.name)}')">编辑</button>
+            <button class="delete" onclick="deleteTag(${t.id})">删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('tagForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('tagName').value.trim();
+      const color = document.getElementById('tagColor').value;
+      
+      if (!name) return;
+
+      try {
+        const response = await fetch('/admin/api/tags', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, color })
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          showMessage('标签添加成功');
+          document.getElementById('tagName').value = '';
+          loadTags();
+        } else {
+          showMessage(result.error, 'error');
+        }
+      } catch (err) {
+        showMessage('添加失败', 'error');
+      }
+    });
+
+    async function deleteTag(id) {
+      if (!confirm('确定要删除这个标签吗？')) return;
+      
+      try {
+        await fetch(`/admin/api/tags/${id}`, { method: 'DELETE' });
+        loadTags();
+      } catch (err) {
+        showMessage('删除失败', 'error');
+      }
+    }
+
+    function editTag(id, name) {
+      const newName = prompt('输入新的标签名称:', name);
+      if (!newName || newName === name) return;
+      
+      fetch(`/admin/api/tags/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName })
+      }).then(() => loadTags());
+    }
+
+    function showMessage(text, type = 'success') {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message ${type}`;
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 3000);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    loadTags();
+  </script>
+</body>
+</html>

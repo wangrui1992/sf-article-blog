@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户管理</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d1117; --bg-card: #161b22; --border: #30363d; --accent: #58a6ff; --accent-red: #f85149; --text: #e6edf3; --text-secondary: #8b949e; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .sidebar { position: fixed; left: 0; top: 0; width: 240px; height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); padding: 24px 16px; }
+    .sidebar-logo { font-family: monospace; font-size: 18px; font-weight: 500; margin-bottom: 32px; padding-left: 12px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px; color: var(--text-secondary); text-decoration: none; border-radius: 8px; margin-bottom: 4px; font-size: 14px; transition: all 0.2s; }
+    .nav-item:hover, .nav-item.active { background: rgba(88,166,255,0.1); color: var(--accent); }
+    .main { margin-left: 240px; padding: 32px; }
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-size: 28px; font-weight: 600; }
+    .filters { display: flex; gap: 12px; margin-bottom: 24px; }
+    .filters input, .filters select { padding: 8px 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 14px; }
+    .user-table { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .user-table table { width: 100%; border-collapse: collapse; }
+    .user-table th, .user-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    .user-table th { background: rgba(88,166,255,0.05); font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; }
+    .user-table tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+    .badge-admin { background: rgba(188,140,255,0.1); color: #bc8cff; }
+    .badge-user { background: rgba(88,166,255,0.1); color: var(--accent); }
+    .badge-inactive { background: rgba(248,81,73,0.1); color: var(--accent-red); }
+    .actions button { padding: 6px 12px; border-radius: 6px; background: transparent; border: 1px solid var(--border); color: var(--text-secondary); cursor: pointer; font-size: 12px; }
+    .actions button:hover { border-color: var(--accent); color: var(--accent); }
+    .loading, .empty { text-align: center; padding: 40px; color: var(--text-secondary); }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
+    .pagination button { padding: 8px 16px; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text); cursor: pointer; }
+    .pagination button.active { background: var(--accent); color: #0d1117; border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="sidebar-logo">~/admin</div>
+    <a href="/dashboard" class="nav-item">📊 仪表盘</a>
+    <a href="/article/list" class="nav-item">📝 文章管理</a>
+    <a href="/admin/users" class="nav-item active">👥 用户管理</a>
+    <a href="/admin/settings" class="nav-item">⚙️ 系统设置</a>
+    <a href="/auth/logout" class="nav-item">🚪 退出登录</a>
+  </nav>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>用户管理</h1>
+    </div>
+
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="搜索用户名/邮箱..." onkeyup="loadUsers()">
+      <select id="roleFilter" onchange="loadUsers()">
+        <option value="">全部角色</option>
+        <option value="admin">管理员</option>
+        <option value="user">普通用户</option>
+      </select>
+    </div>
+
+    <div class="user-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>邮箱</th>
+            <th>角色</th>
+            <th>状态</th>
+            <th>注册时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="userList">
+          <tr><td colspan="7" class="loading">加载中...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+  </main>
+
+  <script>
+    let currentPage = 1;
+
+    async function loadUsers(page = 1) {
+      currentPage = page;
+      const keyword = document.getElementById('searchInput').value;
+      const role = document.getElementById('roleFilter').value;
+      const params = new URLSearchParams({ page, keyword, role });
+      
+      document.getElementById('userList').innerHTML = '<tr><td colspan="7" class="loading">加载中...</td></tr>';
+      
+      try {
+        const response = await fetch(`/admin/api/users?${params}`);
+        const result = await response.json();
+        
+        if (result.users && result.users.length > 0) {
+          renderUsers(result.users);
+          renderPagination(result.current_page, result.pages);
+        } else {
+          document.getElementById('userList').innerHTML = '<tr><td colspan="7" class="empty">暂无用户</td></tr>';
+          document.getElementById('pagination').innerHTML = '';
+        }
+      } catch (err) {
+        document.getElementById('userList').innerHTML = '<tr><td colspan="7" class="loading">加载失败</td></tr>';
+      }
+    }
+
+    function renderUsers(users) {
+      document.getElementById('userList').innerHTML = users.map(u => `
+        <tr>
+          <td>${u.id}</td>
+          <td>${u.username}</td>
+          <td>${u.email || '-'}</td>
+          <td><span class="badge badge-${u.role}">${u.role === 'admin' ? '管理员' : '用户'}</span></td>
+          <td><span class="badge ${u.is_active ? 'badge-user' : 'badge-inactive'}">${u.is_active ? '正常' : '禁用'}</span></td>
+          <td>${u.created_at ? u.created_at.slice(0, 10) : '-'}</td>
+          <td class="actions">
+            <button onclick="toggleRole(${u.id}, '${u.role}')">${u.role === 'admin' ? '设为用户' : '设为管理员'}</button>
+            <button onclick="toggleStatus(${u.id}, ${u.is_active})">${u.is_active ? '禁用' : '启用'}</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPagination(current, total) {
+      if (total <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+      let html = `<button ${current === 1 ? 'disabled' : ''} onclick="loadUsers(${current-1})">上一页</button>`;
+      for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current-2 && i <= current+2)) {
+          html += `<button class="${i === current ? 'active' : ''}" onclick="loadUsers(${i})">${i}</button>`;
+        }
+      }
+      html += `<button ${current === total ? 'disabled' : ''} onclick="loadUsers(${current+1})">下一页</button>`;
+      document.getElementById('pagination').innerHTML = html;
+    }
+
+    async function toggleRole(id, currentRole) {
+      const newRole = currentRole === 'admin' ? 'user' : 'admin';
+      if (!confirm(`确定要将此用户设为${newRole === 'admin' ? '管理员' : '普通用户'}吗？`)) return;
+      
+      await fetch(`/admin/api/users/${id}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole })
+      });
+      loadUsers(currentPage);
+    }
+
+    async function toggleStatus(id, isActive) {
+      if (!confirm(`确定要${isActive ? '禁用' : '启用'}此用户吗？`)) return;
+      
+      await fetch(`/admin/api/users/${id}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !isActive })
+      });
+      loadUsers(currentPage);
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>

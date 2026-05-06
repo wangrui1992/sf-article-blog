@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编辑文章</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --bg-card: #161b22; --border: #30363d;
+      --accent: #58a6ff; --accent-green: #3fb950; --accent-red: #f85149;
+      --text: #e6edf3; --text-secondary: #8b949e;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .page-header h1 { font-size: 24px; font-weight: 600; }
+    .btn {
+      padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
+      cursor: pointer; text-decoration: none; transition: opacity 0.2s; border: none;
+    }
+    .btn-primary { background: var(--accent); color: #0d1117; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-success { background: var(--accent-green); color: #0d1117; }
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; margin-bottom: 24px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 14px; font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--accent);
+    }
+    .form-group textarea { min-height: 400px; resize: vertical; font-family: 'JetBrains Mono', monospace; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .tags-input { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+    .tag-item { display: flex; align-items: center; gap: 4px; padding: 4px 8px; background: rgba(88,166,255,0.1); border-radius: 4px; font-size: 12px; }
+    .tag-item button { background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 0; }
+    .message { padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; display: none; }
+    .message.success { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); color: var(--accent-green); }
+    .message.error { background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); color: var(--accent-red); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1 id="pageTitle">新建文章</h1>
+      <div style="display:flex;gap:12px;">
+        <button class="btn btn-secondary" onclick="saveDraft()">保存草稿</button>
+        <button class="btn btn-success" onclick="publishArticle()">发布</button>
+        <a href="/article/list" class="btn btn-secondary">返回列表</a>
+      </div>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <div class="card">
+      <form id="articleForm">
+        <div class="form-group">
+          <label>标题</label>
+          <input type="text" id="title" name="title" placeholder="输入文章标题" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>URL Slug</label>
+            <input type="text" id="slug" name="slug" placeholder="article-url-slug">
+          </div>
+          <div class="form-group">
+            <label>状态</label>
+            <select id="status" name="status">
+              <option value="draft">草稿</option>
+              <option value="published">已发布</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>摘要</label>
+          <input type="text" id="summary" name="summary" placeholder="文章摘要（可选）">
+        </div>
+
+        <div class="form-group">
+          <label>内容</label>
+          <textarea id="content" name="content" placeholder="使用 Markdown 编写文章内容..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>标签</label>
+          <select id="tagSelect" onchange="addTag()">
+            <option value="">选择标签...</option>
+          </select>
+          <div id="selectedTags" class="tags-input" style="margin-top:8px;"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const articleId = window.location.pathname.split('/').pop();
+    const isEdit = articleId !== 'create' && !isNaN(articleId);
+    let selectedTags = [];
+
+    async function init() {
+      // 加载标签列表
+      const tagResponse = await fetch('/api/tags');
+      const tagResult = await tagResponse.json();
+      if (tagResult.success) {
+        const select = document.getElementById('tagSelect');
+        tagResult.data.forEach(tag => {
+          select.innerHTML += `<option value="${tag.id}">${tag.name}</option>`;
+        });
+      }
+
+      // 编辑模式加载文章
+      if (isEdit) {
+        document.getElementById('pageTitle').textContent = '编辑文章';
+        const response = await fetch(`/article/api/${articleId}`);
+        const result = await response.json();
+        if (result.success) {
+          const a = result.data;
+          document.getElementById('title').value = a.title || '';
+          document.getElementById('slug').value = a.slug || '';
+          document.getElementById('summary').value = a.summary || '';
+          document.getElementById('content').value = a.content || '';
+          document.getElementById('status').value = a.status || 'draft';
+          selectedTags = (a.tags || []).map(t => t.id);
+          renderTags(a.tags || []);
+        }
+      }
+    }
+
+    function renderTags(tags) {
+      const container = document.getElementById('selectedTags');
+      container.innerHTML = tags.map(t => `
+        <span class="tag-item">
+          ${t.name}
+          <button onclick="removeTag(${t.id})">&times;</button>
+        </span>
+      `).join('');
+    }
+
+    function addTag() {
+      const select = document.getElementById('tagSelect');
+      const tagId = parseInt(select.value);
+      if (tagId && !selectedTags.includes(tagId)) {
+        selectedTags.push(tagId);
+        const tagName = select.options[select.selectedIndex].text;
+        renderTags(selectedTags.map(id => ({ id, name: tagName })));
+      }
+      select.value = '';
+    }
+
+    function removeTag(tagId) {
+      selectedTags = selectedTags.filter(id => id !== tagId);
+      // 简化渲染
+      document.getElementById('selectedTags').innerHTML = selectedTags.map(id => 
+        `<span class="tag-item">标签 ${id} <button onclick="removeTag(${id})">&times;</button></span>`
+      ).join('');
+    }
+
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message ${type}`;
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 3000);
+    }
+
+    async function saveDraft() {
+      await saveArticle('draft');
+    }
+
+    async function publishArticle() {
+      await saveArticle('published');
+    }
+
+    async function saveArticle(status) {
+      const data = {
+        title: document.getElementById('title').value.trim(),
+        slug: document.getElementById('slug').value.trim(),
+        summary: document.getElementById('summary').value.trim(),
+        content: document.getElementById('content').value,
+        status: status,
+        tag_ids: selectedTags
+      };
+
+      if (!data.title) {
+        showMessage('请输入标题', 'error');
+        return;
+      }
+      if (!data.content) {
+        showMessage('请输入内容', 'error');
+        return;
+      }
+
+      try {
+        const url = isEdit ? `/article/api/${articleId}` : '/article/api';
+        const method = isEdit ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+          showMessage(status === 'published' ? '发布成功！' : '草稿已保存', 'success');
+          if (!isEdit && result.data.article.id) {
+            history.replaceState({}, '', `/article/edit/${result.data.article.id}`);
+            isEdit = true;
+          }
+        } else {
+          showMessage(result.error, 'error');
+        }
+      } catch (err) {
+        showMessage('保存失败', 'error');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

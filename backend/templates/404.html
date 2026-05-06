@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - 页面不存在</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .container { padding: 40px; }
+    .code { font-size: 120px; font-weight: 600; color: #30363d; line-height: 1; }
+    .title { font-size: 24px; font-weight: 600; margin: 24px 0 12px; }
+    .desc { color: #8b949e; margin-bottom: 32px; }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #58a6ff;
+      color: #0d1117;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="code">404</div>
+    <div class="title">页面不存在</div>
+    <div class="desc">您访问的页面可能已被删除或地址有误</div>
+    <a href="/" class="btn">返回首页</a>
+  </div>
+</body>
+</html>

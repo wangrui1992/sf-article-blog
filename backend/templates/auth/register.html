@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册 - 博客管理系统</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      color: #e6edf3;
+    }
+    .container { width: 100%; max-width: 400px; padding: 20px; }
+    .card {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 16px; padding: 40px;
+    }
+    .header { text-align: center; margin-bottom: 32px; }
+    .header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .header p { color: #8b949e; font-size: 14px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+    .form-group input {
+      width: 100%; padding: 12px 16px;
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; color: #e6edf3; font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { outline: none; border-color: #58a6ff; }
+    .btn {
+      width: 100%; padding: 12px; background: #58a6ff; color: #0d1117;
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .footer { text-align: center; margin-top: 24px; font-size: 13px; color: #8b949e; }
+    .footer a { color: #58a6ff; text-decoration: none; }
+    .error-msg, .success-msg {
+      padding: 12px; border-radius: 8px; margin-bottom: 20px;
+      font-size: 13px; display: none;
+    }
+    .error-msg { background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); color: #f85149; }
+    .success-msg { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); color: #3fb950; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>创建账号</h1>
+        <p>加入我们的技术社区</p>
+      </div>
+      
+      <div class="error-msg" id="errorMsg"></div>
+      <div class="success-msg" id="successMsg"></div>
+      
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="username">用户名</label>
+          <input type="text" id="username" placeholder="3-20位字母、数字、下划线" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">邮箱</label>
+          <input type="email" id="email" placeholder="your@email.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">密码</label>
+          <input type="password" id="password" placeholder="至少6位" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password_confirm">确认密码</label>
+          <input type="password" id="password_confirm" placeholder="再次输入密码" required>
+        </div>
+        
+        <button type="submit" class="btn">注 册</button>
+      </form>
+      
+      <div class="footer">
+        已有账号？ <a href="/auth/login">立即登录</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      
+      const data = {
+        username: document.getElementById('username').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value,
+        password_confirm: document.getElementById('password_confirm').value
+      };
+      
+      try {
+        const response = await fetch('/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          const successMsg = document.getElementById('successMsg');
+          successMsg.textContent = result.message;
+          successMsg.style.display = 'block';
+          setTimeout(() => window.location.href = result.data.redirect, 1500);
+        } else {
+          errorMsg.textContent = result.error;
+          errorMsg.style.display = 'block';
+        }
+      } catch (err) {
+        errorMsg.textContent = '网络错误，请重试';
+        errorMsg.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
