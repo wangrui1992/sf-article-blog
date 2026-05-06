@@ -6,5 +6,5 @@ Author: wangrui1992
 """
 
 from models.user import User
-from models.article import Article
-from models.tag import Tag, ArticleTag
+from models.article import Article, ArticleTag
+from models.tag import Tag

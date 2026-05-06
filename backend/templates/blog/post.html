@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ article.title }} - SegmentFault 博客</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --bg-card: #161b22; --bg-card-hover: #1c2128;
+      --border: #30363d; --accent: #58a6ff; --accent-hover: #79b8ff;
+      --accent-green: #3fb950; --accent-purple: #bc8cff; --accent-orange: #f78166;
+      --text: #e6edf3; --text-secondary: #8b949e; --text-tertiary: #6e7681;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.7;
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-hover); }
+
+    /* ===== Header ===== */
+    .header {
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;
+    }
+    .header-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .header-logo {
+      font-size: 18px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 8px; letter-spacing: -0.3px;
+    }
+    .header-logo:hover { color: var(--accent); }
+    .header-nav { display: flex; align-items: center; gap: 20px; }
+    .header-nav a { font-size: 14px; color: var(--text-secondary); }
+    .header-nav a:hover { color: var(--accent); }
+
+    /* ===== Container ===== */
+    .container { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    /* ===== Article Header ===== */
+    .article-header { margin-bottom: 40px; }
+    .article-title {
+      font-size: 40px; font-weight: 700; line-height: 1.25; letter-spacing: -0.5px;
+      margin-bottom: 20px; color: var(--text);
+    }
+    .article-meta {
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;
+    }
+    .article-meta-item { display: flex; align-items: center; gap: 6px; }
+    .article-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      padding: 4px 10px; background: rgba(88,166,255,0.1); color: var(--accent);
+      border-radius: 20px; font-size: 12px; font-weight: 500; transition: all 0.2s;
+    }
+    .tag:hover { background: rgba(88,166,255,0.2); color: var(--accent-hover); }
+
+    /* ===== Cover Image ===== */
+    .cover-image {
+      width: 100%; max-height: 420px; object-fit: cover;
+      border-radius: 16px; margin-bottom: 40px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    /* ===== Article Body ===== */
+    .article-body { font-size: 17px; color: var(--text); }
+    .article-body h2 {
+      font-size: 26px; font-weight: 700; margin: 48px 0 20px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .article-body h3 {
+      font-size: 20px; font-weight: 600; margin: 32px 0 16px; color: var(--text);
+    }
+    .article-body p { margin-bottom: 20px; }
+    .article-body ul, .article-body ol {
+      margin: 16px 0 20px 24px; padding: 0;
+    }
+    .article-body li { margin-bottom: 8px; }
+    .article-body pre {
+      background: #1c2128; border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px 24px; overflow-x: auto; margin: 24px 0;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      font-size: 14px; line-height: 1.6;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .article-body code {
+      font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+      background: rgba(88,166,255,0.08); color: #79c0ff; padding: 2px 7px;
+      border-radius: 5px; font-size: 14px; border: 1px solid rgba(88,166,255,0.15);
+    }
+    .article-body pre code {
+      background: none; color: var(--text); padding: 0; font-size: 14px;
+      border: none; border-radius: 0;
+    }
+    .article-body blockquote {
+      border-left: 4px solid var(--accent); padding: 12px 20px; margin: 24px 0;
+      background: rgba(88,166,255,0.05); border-radius: 0 8px 8px 0;
+      color: var(--text-secondary); font-style: italic;
+    }
+    .article-body strong { color: var(--text); font-weight: 600; }
+
+    /* ===== Article Footer ===== */
+    .article-footer {
+      margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; color: var(--text-secondary);
+    }
+    .article-footer a { font-size: 14px; }
+    .article-footer .stats { display: flex; gap: 20px; }
+
+    /* ===== Not Found ===== */
+    .not-found {
+      text-align: center; padding: 120px 24px; color: var(--text-secondary);
+    }
+    .not-found h1 { font-size: 72px; font-weight: 700; margin-bottom: 16px; color: var(--border); }
+    .not-found p { font-size: 18px; margin-bottom: 32px; }
+    .not-found .btn {
+      display: inline-block; padding: 12px 28px; background: var(--accent);
+      color: #0d1117; border-radius: 8px; font-weight: 600; font-size: 15px;
+    }
+    .not-found .btn:hover { background: var(--accent-hover); color: #0d1117; }
+
+    /* ===== Footer ===== */
+    .site-footer {
+      border-top: 1px solid var(--border); padding: 28px 24px;
+      text-align: center; font-size: 13px; color: var(--text-tertiary);
+      background: var(--bg-card);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="header-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        SegmentFault 博客
+      </a>
+      <nav class="header-nav">
+        <a href="/">首页</a>
+        <a href="/dashboard">管理后台</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% if article %}
+    <article>
+      <header class="article-header">
+        <h1 class="article-title">{{ article.title }}</h1>
+        <div class="article-meta">
+          {% if article.author %}
+          <span class="article-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            {{ article.author.username }}
+          </span>
+          {% endif %}
+          <span class="article-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            {{ article.created_at.strftime('%Y-%m-%d') if article.created_at else '' }}
+          </span>
+          <span class="article-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            {{ article.view_count or 0 }} 次阅读
+          </span>
+        </div>
+        {% if article.tags %}
+        <div class="article-tags">
+          {% for tag in article.tags %}
+            <a href="#" class="tag">{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </header>
+
+      {% if article.cover_image %}
+        <img src="{{ article.cover_image }}" alt="{{ article.title }}" class="cover-image">
+      {% endif %}
+
+      <div class="article-body">
+        {{ article.content | safe }}
+      </div>
+
+      <footer class="article-footer">
+        <a href="/" class="back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><polyline points="15 18 9 12 15 6"/></svg>
+          返回首页
+        </a>
+        <div class="stats">
+          <span>最后更新：{{ article.updated_at.strftime('%Y-%m-%d') if article.updated_at else '' }}</span>
+        </div>
+      </footer>
+    </article>
+    {% else %}
+    <div class="not-found">
+      <h1>404</h1>
+      <p>文章不存在或已被删除</p>
+      <a href="/" class="btn">返回首页</a>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 SegmentFault 博客 &bull; Powered by Flask</p>
+  </footer>
+
+</body>
+</html>

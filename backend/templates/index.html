@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SegmentFault 博客</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --bg-card: #161b22; --bg-card-hover: #1c2128;
+      --border: #30363d; --accent: #58a6ff; --accent-hover: #79b8ff;
+      --accent-green: #3fb950; --accent-purple: #bc8cff; --accent-orange: #f78166;
+      --text: #e6edf3; --text-secondary: #8b949e; --text-tertiary: #6e7681;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent-hover); }
+
+    /* ===== Header ===== */
+    .header {
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; height: 64px;
+    }
+    .header-logo {
+      font-size: 20px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px;
+    }
+    .header-logo:hover { color: var(--accent); }
+    .header-nav { display: flex; align-items: center; gap: 24px; }
+    .header-nav a { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+    .header-nav a:hover { color: var(--accent); }
+    .btn-write {
+      padding: 8px 18px; background: var(--accent); color: #0d1117;
+      border-radius: 8px; font-size: 14px; font-weight: 600;
+    }
+    .btn-write:hover { background: var(--accent-hover); color: #0d1117; }
+
+    /* ===== Hero ===== */
+    .hero {
+      max-width: 1100px; margin: 0 auto; padding: 72px 24px 48px;
+    }
+    .hero h1 {
+      font-size: 48px; font-weight: 700; letter-spacing: -1px; line-height: 1.2;
+      margin-bottom: 16px; color: var(--text);
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p { font-size: 18px; color: var(--text-secondary); max-width: 560px; }
+
+    /* ===== Container ===== */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ===== Section Header ===== */
+    .section-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title { font-size: 20px; font-weight: 600; color: var(--text); }
+    .section-title span { color: var(--accent); }
+    .section-more { font-size: 13px; color: var(--text-secondary); }
+    .section-more:hover { color: var(--accent); }
+
+    /* ===== Articles Grid ===== */
+    .articles-list { display: flex; flex-direction: column; gap: 16px; }
+
+    .article-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; transition: all 0.25s ease; cursor: pointer;
+    }
+    .article-card:hover {
+      border-color: var(--accent); transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .article-card-inner { display: flex; align-items: stretch; }
+    .article-card-cover {
+      width: 240px; flex-shrink: 0; overflow: hidden; background: var(--bg);
+    }
+    .article-card-cover img {
+      width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;
+    }
+    .article-card:hover .article-card-cover img { transform: scale(1.05); }
+    .article-card-content { padding: 24px 28px; flex: 1; min-width: 0; }
+    .article-card-title {
+      font-size: 20px; font-weight: 600; line-height: 1.4; margin-bottom: 10px;
+      color: var(--text); transition: color 0.2s;
+    }
+    .article-card:hover .article-card-title { color: var(--accent); }
+    .article-card-summary {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+      margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .article-card-meta {
+      display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-tertiary);
+    }
+    .article-card-meta-item { display: flex; align-items: center; gap: 5px; }
+    .article-card-tags { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+    .tag {
+      padding: 3px 9px; background: rgba(88,166,255,0.08); color: var(--accent);
+      border-radius: 12px; font-size: 11px; font-weight: 500;
+      border: 1px solid rgba(88,166,255,0.15);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center; padding: 80px 24px; color: var(--text-secondary);
+    }
+    .empty-state-icon { font-size: 64px; margin-bottom: 20px; opacity: 0.3; }
+    .empty-state h2 { font-size: 24px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+    .empty-state p { font-size: 15px; }
+    .empty-state .btn-write { display: inline-block; margin-top: 24px; text-decoration: none; }
+
+    /* ===== No-cover cards (for articles without cover) ===== */
+    .article-card.no-cover .article-card-inner { flex-direction: column; }
+    .article-card.no-cover .article-card-content { padding: 28px; }
+
+    /* ===== Footer ===== */
+    .site-footer {
+      border-top: 1px solid var(--border); padding: 28px 24px;
+      text-align: center; font-size: 13px; color: var(--text-tertiary);
+      background: var(--bg-card);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 32px; }
+      .article-card-cover { display: none; }
+      .article-card.no-cover .article-card-content { padding: 20px; }
+      .article-card-title { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="header-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        SegmentFault 博客
+      </a>
+      <nav class="header-nav">
+        <a href="/dashboard">管理后台</a>
+        <a href="/article/create" class="btn-write">✏️ 写文章</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>探索技术的<span>无限可能</span></h1>
+    <p>分享技术见解，记录成长历程。在这里，每一行代码都有价值。</p>
+  </section>
+
+  <main class="container">
+    {% if articles %}
+    <div class="section-header">
+      <h2 class="section-title">最新文章 <span>{{ articles|length }}+</span></h2>
+      <a href="/article/drafts" class="section-more">我的草稿 →</a>
+    </div>
+
+    <div class="articles-list">
+      {% for article in articles %}
+      <article class="article-card {% if not article.cover_image %}no-cover{% endif %}" onclick="location.href='/blog/{{ article.slug }}'">
+        <div class="article-card-inner">
+          {% if article.cover_image %}
+          <div class="article-card-cover">
+            <img src="{{ article.cover_image }}" alt="{{ article.title }}">
+          </div>
+          {% endif %}
+          <div class="article-card-content">
+            <h2 class="article-card-title">{{ article.title }}</h2>
+            <p class="article-card-summary">
+              {{ article.summary or (article.content|striptags)[:200] if article.content else '' }}
+            </p>
+            <div class="article-card-meta">
+              {% if article.author %}
+              <span class="article-card-meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                {{ article.author.username }}
+              </span>
+              {% endif %}
+              <span class="article-card-meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                {{ article.created_at.strftime('%Y-%m-%d') if article.created_at else '' }}
+              </span>
+              <span class="article-card-meta-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                {{ article.view_count or 0 }}
+              </span>
+            </div>
+            {% if article.tags %}
+            <div class="article-card-tags">
+              {% for tag in article.tags[:3] %}
+                <span class="tag">{{ tag.name }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">📝</div>
+      <h2>暂无文章</h2>
+      <p>还没有发布的文章，成为第一个作者吧！</p>
+      <a href="/article/create" class="btn-write">✏️ 写文章</a>
+    </div>
+    {% endif %}
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 SegmentFault 博客 &bull; Built with Flask &bull; <a href="/dashboard">管理后台</a></p>
+  </footer>
+
+</body>
+</html>
