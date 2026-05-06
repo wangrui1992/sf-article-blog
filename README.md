@@ -1,197 +1,231 @@
-﻿# SegmentFault 鍗氬鍚庡彴绠＄悊绯荤粺
+# SegmentFault 博客后台管理系统
 
-鍩轰簬 SegmentFault 鏂囩珷鏁版嵁鐨?Flask 鍚庡彴绠＄悊绯荤粺锛屾敮鎸佹枃绔犵鐞嗐€佺敤鎴风鐞嗐€佹爣绛剧鐞嗐€佹暟鎹彲瑙嗗寲绛夊畬鏁村姛鑳姐€?
-## 鍔熻兘鐗规€?
-### 鏍稿績鍔熻兘
-- **鏂囩珷绠＄悊**锛氬垱寤恒€佺紪杈戙€佸彂甯冦€佸垹闄ゆ枃绔狅紝鏀寔 Markdown 缂栬緫鍣ㄥ拰鏍囩绠＄悊
-- **鐢ㄦ埛绠＄悊**锛氱敤鎴锋敞鍐岀櫥褰曘€佽鑹叉潈闄愮鐞嗭紙浣滆€?绠＄悊鍛橈級銆佺姸鎬佸惎鐢?绂佺敤
-- **鏍囩绯荤粺**锛氱伒娲荤殑鏍囩 CRUD 鎿嶄綔锛屾敮鎸佽嚜瀹氫箟棰滆壊鍜屽埆鍚?- **鑽夌绠?*锛氳嚜鍔ㄤ繚瀛樻枃绔犺崏绋匡紝闃叉鍐呭涓㈠け
-- **杞垹闄ゆ満鍒?*锛氭暟鎹畨鍏ㄥ垹闄わ紝鏀寔鎭㈠
+基于 SegmentFault 文章数据的 Flask 后台管理系统，支持文章管理、用户管理、标签管理、数据可视化等完整功能。
 
-### 鏁版嵁鍙鍖?- **浠〃鐩樼粺璁?*锛氭€绘枃绔犳暟銆佹€荤敤鎴锋暟銆佹€绘爣绛炬暟銆佹湰鏈堟柊澧?- **瓒嬪娍鍥捐〃**锛欵Charts 鎶樼嚎鍥惧睍绀烘枃绔犲彂甯冭秼鍔?- **鐑棬鏍囩**锛氶ゼ鍥惧睍绀烘爣绛惧垎甯?- **鏈€鏂版枃绔?*锛氬疄鏃跺睍绀烘渶杩戝彂甯冪殑鏂囩珷鍒楄〃
+## 功能特性
 
-### 绯荤粺绠＄悊
-- **绯荤粺璁剧疆**锛氬熀鏈厤缃€佺敤鎴疯缃€佸畨鍏ㄨ缃?- **鏁版嵁澶囦唤**锛欽SON/CSV 鏍煎紡瀵煎嚭瀵煎叆
-- **鎿嶄綔鏃ュ織**锛氬畬鏁磋褰曠敤鎴锋搷浣滆涓?- **鍋ュ悍妫€鏌?*锛氱郴缁熻繍琛岀姸鎬佺洃鎺?
-## 鎶€鏈爤
+### 核心功能
+- **文章管理**：创建、编辑、发布、删除文章，支持 Markdown 编辑器和标签管理
+- **用户管理**：用户注册登录、角色权限管理（作者/管理员）、状态启用/禁用
+- **标签系统**：灵活的标签 CRUD 操作，支持自定义颜色和别名
+- **草稿箱**：自动保存文章草稿，防止内容丢失
+- **软删除机制**：数据安全删除，支持恢复
 
-### 鍚庣
-- **妗嗘灦**锛欶lask 2.3+ (搴旂敤宸ュ巶妯″紡)
-- **ORM**锛歋QLAlchemy 2.0 (杞垹闄ゃ€佸鍚堢储寮?
-- **璁よ瘉**锛欶lask-Login + Flask-WTF (CSRF 淇濇姢)
-- **缂撳瓨**锛氬唴瀛樼紦瀛樼郴缁?(SimpleCache + @cached 瑁呴グ鍣?
+### 数据可视化
+- **仪表盘统计**：总文章数、总用户数、总标签数、本月新增
+- **趋势图表**：ECharts 折线图展示文章发布趋势
+- **热门标签**：饼图展示标签分布
+- **最新文章**：实时展示最近发布的文章列表
 
-### 鍓嶇
-- **妯℃澘寮曟搸**锛欽inja2
-- **鍥捐〃搴?*锛欵Charts 5.x
-- **鏍峰紡**锛氬師鐢?CSS (GitHub Dark 椋庢牸)
+### 系统管理
+- **系统设置**：基本配置、用户设置、安全设置
+- **数据备份**：JSON/CSV 格式导出导入
+- **操作日志**：完整记录用户操作行为
+- **健康检查**：系统运行状态监控
 
-### 鏁版嵁搴?- **绫诲瀷**锛歋QLite (寮€鍙戠幆澧? / PostgreSQL (鐢熶骇鐜)
-- **鎬ц兘浼樺寲**锛氬鍚堢储寮曘€乯oinedload 棰勫姞杞姐€佸唴瀛樼紦瀛?
-## 鐩綍缁撴瀯
+## 技术栈
+
+### 后端
+- **框架**：Flask 2.3+ (应用工厂模式)
+- **ORM**：SQLAlchemy 2.0 (软删除、复合索引)
+- **认证**：Flask-Login + Flask-WTF (CSRF 保护)
+- **缓存**：内存缓存系统 (SimpleCache + @cached 装饰器)
+
+### 前端
+- **模板引擎**：Jinja2
+- **图表库**：ECharts 5.x
+- **样式**：原生 CSS (GitHub Dark 风格)
+
+### 数据库
+- **类型**：SQLite (开发环境) / PostgreSQL (生产环境)
+- **性能优化**：复合索引、joinedload 预加载、内存缓存
+
+## 目录结构
 
 ```
 sf-article-blog/
-鈹溾攢鈹€ README.md                 # 椤圭洰璇存槑鏂囨。
-鈹溾攢鈹€ LICENSE                   # MIT 寮€婧愬崗璁?鈹溾攢鈹€ CHANGELOG.md              # 鏇存柊鏃ュ織
-鈹溾攢鈹€ requirements.txt          # Python 渚濊禆
-鈹溾攢鈹€ index.html                # 闈欐€侀椤?鈹溾攢鈹€ fetch_articles.py         # 鏂囩珷鎶撳彇鑴氭湰
-鈹溾攢鈹€ sample_data.json          # 绀轰緥鏁版嵁
-鈹?鈹斺攢鈹€ backend/
-    鈹溾攢鈹€ app.py                # Flask 搴旂敤鍏ュ彛 (create_app)
-    鈹溾攢鈹€ config.py              # 閰嶇疆鏂囦欢
-    鈹溾攢鈹€ run.py                 # 鍚姩鑴氭湰
-    鈹溾攢鈹€ requirements.txt       # Python 渚濊禆
-    鈹?    鈹溾攢鈹€ models/                # 鏁版嵁妯″瀷灞?    鈹?  鈹溾攢鈹€ database.py        # 鏁版嵁搴撳垵濮嬪寲 & 鍒嗛〉宸ュ叿
-    鈹?  鈹溾攢鈹€ user.py            # 鐢ㄦ埛妯″瀷
-    鈹?  鈹溾攢鈹€ article.py          # 鏂囩珷妯″瀷
-    鈹?  鈹溾攢鈹€ tag.py              # 鏍囩妯″瀷
-    鈹?  鈹溾攢鈹€ log.py              # 鎿嶄綔鏃ュ織妯″瀷
-    鈹?  鈹斺攢鈹€ __init__.py
-    鈹?    鈹溾攢鈹€ routes/                # 璺敱鎺у埗鍣ㄥ眰
-    鈹?  鈹溾攢鈹€ auth.py            # 璁よ瘉璺敱 (鐧诲綍/娉ㄥ唽/鐧诲嚭)
-    鈹?  鈹溾攢鈹€ article.py          # 鏂囩珷璺敱 (CRUD/API)
-    鈹?  鈹溾攢鈹€ admin.py            # 绠＄悊鍚庡彴璺敱
-    鈹?  鈹溾攢鈹€ api.py              # API 鎺ュ彛璺敱
-    鈹?  鈹斺攢鈹€ __init__.py
-    鈹?    鈹溾攢鈹€ utils/                 # 宸ュ叿鍑芥暟灞?    鈹?  鈹溾攢鈹€ helpers.py          # 閫氱敤杈呭姪鍑芥暟
-    鈹?  鈹溾攢鈹€ validators.py       # 琛ㄥ崟楠岃瘉鍣?    鈹?  鈹溾攢鈹€ cache.py             # 缂撳瓨瑁呴グ鍣?    鈹?  鈹溾攢鈹€ security.py          # 瀹夊叏宸ュ叿
-    鈹?  鈹斺攢鈹€ __init__.py
-    鈹?    鈹斺攢鈹€ templates/             # Jinja2 妯℃澘
-        鈹溾攢鈹€ dashboard.html      # 浠〃鐩?        鈹溾攢鈹€ 404.html            # 閿欒椤甸潰
-        鈹溾攢鈹€ auth/
-        鈹?  鈹溾攢鈹€ login.html      # 鐧诲綍椤?        鈹?  鈹斺攢鈹€ register.html   # 娉ㄥ唽椤?        鈹溾攢鈹€ article/
-        鈹?  鈹溾攢鈹€ list.html       # 鏂囩珷鍒楄〃
-        鈹?  鈹斺攢鈹€ edit.html        # 鏂囩珷缂栬緫鍣?        鈹斺攢鈹€ admin/
-            鈹溾攢鈹€ users.html      # 鐢ㄦ埛绠＄悊
-            鈹溾攢鈹€ tags.html       # 鏍囩绠＄悊
-            鈹溾攢鈹€ settings.html    # 绯荤粺璁剧疆
-            鈹斺攢鈹€ backup.html      # 鏁版嵁澶囦唤
+├── README.md                 # 项目说明文档
+├── LICENSE                   # MIT 开源协议
+├── CHANGELOG.md              # 更新日志
+├── requirements.txt          # Python 依赖
+├── index.html                # 静态首页
+├── fetch_articles.py         # 文章抓取脚本
+├── sample_data.json          # 示例数据
+│
+└── backend/
+    ├── app.py                # Flask 应用入口 (create_app)
+    ├── config.py             # 配置文件
+    ├── run.py                # 启动脚本
+    ├── requirements.txt      # Python 依赖
+    │
+    ├── models/               # 数据模型层
+    │   ├── database.py       # 数据库初始化 & 分页工具
+    │   ├── user.py           # 用户模型
+    │   ├── article.py         # 文章模型
+    │   ├── tag.py             # 标签模型
+    │   ├── log.py             # 操作日志模型
+    │   └── __init__.py
+    │
+    ├── routes/               # 路由控制器层
+    │   ├── auth.py           # 认证路由 (登录/注册/登出)
+    │   ├── article.py        # 文章路由 (CRUD/API)
+    │   ├── admin.py          # 管理后台路由
+    │   ├── api.py            # API 接口路由
+    │   └── __init__.py
+    │
+    ├── utils/                # 工具函数层
+    │   ├── helpers.py        # 通用辅助函数
+    │   ├── validators.py     # 表单验证器
+    │   ├── cache.py          # 缓存装饰器
+    │   ├── security.py        # 安全工具
+    │   └── __init__.py
+    │
+    └── templates/           # Jinja2 模板
+        ├── dashboard.html     # 仪表盘
+        ├── 404.html           # 错误页面
+        ├── auth/
+        │   ├── login.html     # 登录页
+        │   └── register.html  # 注册页
+        ├── article/
+        │   ├── list.html      # 文章列表
+        │   └── edit.html      # 文章编辑器
+        └── admin/
+            ├── users.html     # 用户管理
+            ├── tags.html      # 标签管理
+            ├── settings.html  # 系统设置
+            └── backup.html    # 数据备份
 ```
 
-## 蹇€熷紑濮?
-### 鐜瑕佹眰
+## 快速开始
+
+### 环境要求
 - Python 3.8+
-- pip 鍖呯鐞嗗櫒
+- pip 包管理器
 
-### 瀹夎姝ラ
+### 安装步骤
 
-1. **鍏嬮殕椤圭洰**
+1. **克隆项目**
 ```bash
 git clone <repository-url>
 cd sf-article-blog
 ```
 
-2. **鍒涘缓铏氭嫙鐜**
+2. **创建虚拟环境**
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 ```
 
-3. **瀹夎渚濊禆**
+3. **安装依赖**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **鍒濆鍖栨暟鎹簱**
+4. **初始化数据库**
 ```bash
 cd backend
 python run.py
 ```
 
-5. **璁块棶绯荤粺**
-鎵撳紑娴忚鍣ㄨ闂細`http://localhost:5000`
+5. **访问系统**
+打开浏览器访问：`http://localhost:5000`
 
-榛樿绠＄悊鍛樿处鍙凤細
-- 鐢ㄦ埛鍚嶏細`admin`
-- 瀵嗙爜锛歚admin123`
+默认管理员账号：
+- 用户名：`admin`
+- 密码：`admin123`
 
-## API 鎺ュ彛
+## API 接口
 
-### 璁よ瘉鎺ュ彛
-| 鏂规硶 | 璺緞 | 璇存槑 |
+### 认证接口
+| 方法 | 路径 | 说明 |
 |------|------|------|
-| POST | `/auth/login` | 鐢ㄦ埛鐧诲綍 |
-| POST | `/auth/register` | 鐢ㄦ埛娉ㄥ唽 |
-| GET | `/auth/logout` | 鐢ㄦ埛鐧诲嚭 |
-| GET | `/api/profile` | 鑾峰彇褰撳墠鐢ㄦ埛淇℃伅 |
-| POST | `/api/profile` | 鏇存柊鐢ㄦ埛璧勬枡 |
-| POST | `/api/change-password` | 淇敼瀵嗙爜 |
+| POST | `/auth/login` | 用户登录 |
+| POST | `/auth/register` | 用户注册 |
+| GET | `/auth/logout` | 用户登出 |
+| GET | `/api/profile` | 获取当前用户信息 |
+| POST | `/api/profile` | 更新用户资料 |
+| POST | `/api/change-password` | 修改密码 |
 
-### 鏂囩珷鎺ュ彛
-| 鏂规硶 | 璺緞 | 璇存槑 |
+### 文章接口
+| 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/article/list` | 鏂囩珷鍒楄〃 (鍒嗛〉/绛涢€? |
-| POST | `/article/create` | 鍒涘缓鏂囩珷 |
-| POST | `/article/update/<id>` | 鏇存柊鏂囩珷 |
-| POST | `/article/delete/<id>` | 鍒犻櫎鏂囩珷 |
-| POST | `/article/publish/<id>` | 鍙戝竷鏂囩珷 |
-| GET | `/article/drafts` | 鑽夌绠?|
+| GET | `/article/list` | 文章列表 (分页/筛选) |
+| POST | `/article/create` | 创建文章 |
+| POST | `/article/update/<id>` | 更新文章 |
+| POST | `/article/delete/<id>` | 删除文章 |
+| POST | `/article/publish/<id>` | 发布文章 |
+| GET | `/article/drafts` | 草稿箱 |
 
-### 绠＄悊鎺ュ彛
-| 鏂规硶 | 璺緞 | 璇存槑 |
+### 管理接口
+| 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/admin/users` | 鐢ㄦ埛鍒楄〃 |
-| POST | `/admin/users/role` | 淇敼鐢ㄦ埛瑙掕壊 |
-| POST | `/admin/users/status` | 鍚敤/绂佺敤鐢ㄦ埛 |
-| GET | `/admin/tags` | 鏍囩鍒楄〃 |
-| POST | `/admin/tags/create` | 鍒涘缓鏍囩 |
-| PUT | `/admin/tags/<id>` | 鏇存柊鏍囩 |
-| DELETE | `/admin/tags/<id>` | 鍒犻櫎鏍囩 |
-| GET | `/admin/backup` | 澶囦唤绠＄悊椤甸潰 |
-| POST | `/admin/backup/export` | 瀵煎嚭鏁版嵁 |
-| POST | `/admin/backup/import` | 瀵煎叆鏁版嵁 |
+| GET | `/admin/users` | 用户列表 |
+| POST | `/admin/users/role` | 修改用户角色 |
+| POST | `/admin/users/status` | 启用/禁用用户 |
+| GET | `/admin/tags` | 标签列表 |
+| POST | `/admin/tags/create` | 创建标签 |
+| PUT | `/admin/tags/<id>` | 更新标签 |
+| DELETE | `/admin/tags/<id>` | 删除标签 |
+| GET | `/admin/backup` | 备份管理页面 |
+| POST | `/admin/backup/export` | 导出数据 |
+| POST | `/admin/backup/import` | 导入数据 |
 
-### 鏁版嵁鎺ュ彛
-| 鏂规硶 | 璺緞 | 璇存槑 |
+### 数据接口
+| 方法 | 路径 | 说明 |
 |------|------|------|
-| GET | `/api/stats` | 浠〃鐩樼粺璁℃暟鎹?|
-| GET | `/api/trend` | 瓒嬪娍鏁版嵁 |
-| GET | `/api/search` | 鎼滅储鎺ュ彛 |
-| GET | `/api/export/csv` | 瀵煎嚭 CSV |
-| GET | `/api/health` | 鍋ュ悍妫€鏌?|
-| POST | `/api/batch` | 鎵归噺鎿嶄綔 |
+| GET | `/api/stats` | 仪表盘统计数据 |
+| GET | `/api/trend` | 趋势数据 |
+| GET | `/api/search` | 搜索接口 |
+| GET | `/api/export/csv` | 导出 CSV |
+| GET | `/api/health` | 健康检查 |
+| POST | `/api/batch` | 批量操作 |
 
-## SQL 鎬ц兘浼樺寲
+## SQL 性能优化
 
-| 浼樺寲椤?| 瀹炵幇鏂瑰紡 |
+| 优化项 | 实现方式 |
 |--------|----------|
-| 澶嶅悎绱㈠紩 | `idx_user_login(username, is_active)` 鍔犻€熺櫥褰曟煡璇?|
-| 鍒嗛〉闄愬埗 | `LIMIT` + `OFFSET`锛宍per_page` 鏈€澶?100 鏉?|
-| N+1 棰勯槻 | `db.joinedload(Article.author)` 棰勫姞杞戒綔鑰呬俊鎭?|
-| 杞垹闄?| `status` 瀛楁鏍囪锛宍deleted_at` 鏃堕棿鎴充繚鐣欐暟鎹?|
-| 鑱氬悎浼樺寲 | `db.func.count()` / `db.func.sum()` 鑱氬悎鏌ヨ |
-| 缂撳瓨绛栫暐 | 鐑棬鏍囩 5 鍒嗛挓鍐呭瓨缂撳瓨 |
-| 绱㈠紩瑕嗙洊 | 鍙煡璇㈢储寮曞瓧娈碉紝閬垮厤鍥炶〃鏌ヨ |
+| 复合索引 | `idx_user_login(username, is_active)` 加速登录查询 |
+| 分页限制 | `LIMIT` + `OFFSET`，`per_page` 最大 100 条 |
+| N+1 预防 | `db.joinedload(Article.author)` 预加载作者信息 |
+| 软删除 | `status` 字段标记，`deleted_at` 时间戳保留数据 |
+| 聚合优化 | `db.func.count()` / `db.func.sum()` 聚合查询 |
+| 缓存策略 | 热门标签 5 分钟内存缓存 |
+| 索引覆盖 | 只查询索引字段，避免回表查询 |
 
-## 15 澶╄凯浠ｅ紑鍙戞棩蹇?
-璇﹁ [CHANGELOG.md](./CHANGELOG.md)
+## 15 天迭代开发日志
 
-### Day 1-3锛氶」鐩垵濮嬪寲
-- Flask 搴旂敤宸ュ巶妯″紡鎼缓
-- 鏁版嵁搴撴ā鍨嬭璁′笌瀹炵幇
-- 鐢ㄦ埛璁よ瘉绯荤粺鍩虹
+详见 [CHANGELOG.md](./CHANGELOG.md)
 
-### Day 4-6锛氭牳蹇冨姛鑳?- 鏂囩珷 CRUD 瀹屾暣瀹炵幇
-- Markdown 缂栬緫鍣ㄩ泦鎴?- 鏍囩绠＄悊绯荤粺
+### Day 1-3：项目初始化
+- Flask 应用工厂模式搭建
+- 数据库模型设计与实现
+- 用户认证系统基础
 
-### Day 7-9锛氭潈闄愪笌瀹夊叏
-- RBAC 鏉冮檺鎺у埗
-- CSRF 闃叉姢鏈哄埗
-- 琛ㄥ崟楠岃瘉寮哄寲
+### Day 4-6：核心功能
+- 文章 CRUD 完整实现
+- Markdown 编辑器集成
+- 标签管理系统
 
-### Day 10-12锛氭€ц兘浼樺寲
-- SQL 鏌ヨ浼樺寲
-- 鍐呭瓨缂撳瓨绯荤粺
-- 鍒嗛〉缁勪欢浼樺寲
+### Day 7-9：权限与安全
+- RBAC 权限控制
+- CSRF 防护机制
+- 表单验证强化
 
-### Day 13-15锛氬彲瑙嗗寲涓庤繍缁?- ECharts 鍥捐〃闆嗘垚
-- 鏁版嵁澶囦唤瀵煎嚭
-- 鎿嶄綔鏃ュ織绯荤粺
+### Day 10-12：性能优化
+- SQL 查询优化
+- 内存缓存系统
+- 分页组件优化
 
-## 寮€鍙戞寚鍗?
-### 娣诲姞鏂拌矾鐢?```python
+### Day 13-15：可视化与运维
+- ECharts 图表集成
+- 数据备份导出
+- 操作日志系统
+
+## 开发指南
+
+### 添加新路由
+```python
 # backend/routes/new_module.py
 from flask import Blueprint
 
@@ -208,7 +242,8 @@ from routes.new_module import new_bp
 app.register_blueprint(new_bp, url_prefix='/new')
 ```
 
-### 娣诲姞鏂版ā鍨?```python
+### 添加新模型
+```python
 # backend/models/new_model.py
 from database import db
 
@@ -218,22 +253,25 @@ class NewModel(db.Model):
     name = db.Column(db.String(100), nullable=False)
 ```
 
-### 浣跨敤缂撳瓨
+### 使用缓存
 ```python
 from utils.cache import cached, invalidate_cache
 
 @cached(timeout=300, key_prefix='data')
 def get_data():
-    # 鑰楁椂鎿嶄綔
+    # 耗时操作
     return result
 
-# 娓呴櫎缂撳瓨
+# 清除缓存
 invalidate_cache('data:get_data')
 ```
 
-## 璁稿彲璇?
-鏈」鐩熀浜?[MIT License](./LICENSE) 寮€婧愩€?
-## 鑷磋阿
+## 许可证
 
-- [SegmentFault](https://segmentfault.com/) - 鎻愪緵鏂囩珷鏁版嵁婧?- [Flask](https://flask.palletsprojects.com/) - Web 妗嗘灦
-- [ECharts](https://echarts.apache.org/) - 鏁版嵁鍙鍖栧簱
+本项目基于 [MIT License](./LICENSE) 开源。
+
+## 致谢
+
+- [SegmentFault](https://segmentfault.com/) - 提供文章数据源
+- [Flask](https://flask.palletsprojects.com/) - Web 框架
+- [ECharts](https://echarts.apache.org/) - 数据可视化库
