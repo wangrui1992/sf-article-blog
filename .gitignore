@@ -26,6 +26,12 @@ Thumbs.db
 # Project specific - WorkBuddy metadata
 .workbuddy/
 
+# Flask
+instance/
+*.db
+instance/db.sqlite
+backend/instance/
+
 # Data files (generated)
 *.json
 !sample_data.json
