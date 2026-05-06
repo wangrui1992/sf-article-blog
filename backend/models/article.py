@@ -13,6 +13,7 @@ Date: 2026-05-10
 """
 
 from models.database import db
+from sqlalchemy import Index
 from datetime import datetime
 import re
 
